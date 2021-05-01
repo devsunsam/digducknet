@@ -1,0 +1,135 @@
+import React, { useState, useEffect } from "react";
+import queryString from "query-string";
+
+import "./List.css";
+
+import axios from "axios";
+import Search from "./Search";
+import { Link } from "react-router-dom";
+
+const List = (props) => {
+  const [state, setState] = useState({
+    data: [],
+    page: 1,
+    limit: 5,
+    all_page: [],
+  });
+
+  useEffect(() => {
+    getListData();
+    // setPage();
+    return () => {};
+  }, []);
+
+  const getListData = async function () {
+    let limit = state.limit;
+    const page = setPage();
+    console.log(props);
+
+    let search = queryString.parse(props.location.search);
+    console.log(search);
+    if (search) {
+      search = search.search;
+    }
+    // console.log(search)
+
+    const total_cnt = await axios("/get/board_cnt", {
+      method: "POST",
+      headers: new Headers(),
+      data: { search: search },
+    });
+
+    console.log(total_cnt);
+
+    const total_list = await axios("/get/board", {
+      method: "POST",
+      headers: new Headers(),
+      data: { limit: state.limit, page: state.page, search: search },
+    });
+
+    let page_arr = [];
+    console.log(total_cnt, limit);
+    let end = Math.ceil(total_cnt.data.cnt / limit);
+
+    console.log(end);
+    for (let i = 1; i <= end; i++) {
+      page_arr.push(i);
+    }
+
+    setState({ ...state, data: total_list, all_page: page_arr });
+  };
+
+  const changePage = function (el) {
+    setState({ page: el });
+    sessionStorage.setItem("page", el);
+
+    return getListData();
+  };
+
+  const setPage = function () {
+    if (sessionStorage.page) {
+      setState({ ...state, page: Number(sessionStorage.page) });
+      return Number(sessionStorage.page);
+    }
+    setState({ ...state, page: 1 });
+    return 1;
+  };
+
+  const list = state.data.data;
+  const { all_page, page } = state;
+
+  return (
+    <div className="List">
+      <div className="list_grid list_tit">
+        <div> 제목 </div>
+        <div> 조회수 </div>
+        <div className="acenter"> 날짜 </div>
+      </div>
+
+      {list && list.length > 0
+        ? list.map((el, key) => {
+            const view_url = "/view/" + el.board_id;
+            return (
+              <div className="list_grid list_data" key={key}>
+                <div>
+                  {" "}
+                  <Link to={view_url}> {el.title} </Link>{" "}
+                </div>
+
+                <div className="acenter"> {el.date.slice(0, 10)} </div>
+              </div>
+            );
+          })
+        : null}
+
+      <div className="paging_div">
+        <div>
+          <ul>
+            {all_page
+              ? all_page.map((el, key) => {
+                  return el === page ? (
+                    <li key={key} className="page_num">
+                      {" "}
+                      <b> {el} </b>{" "}
+                    </li>
+                  ) : (
+                    <li
+                      key={key}
+                      className="page_num"
+                      onClick={() => this._changePage(el)}
+                    >
+                      {" "}
+                      {el}{" "}
+                    </li>
+                  );
+                })
+              : null}
+          </ul>
+        </div>
+      </div>
+      <Search />
+    </div>
+  );
+};
+
+export default List;

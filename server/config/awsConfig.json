@@ -1,0 +1,5 @@
+{
+  "accessKeyId": "액세스 키",
+  "secretAccessKey": "보안 액세스 키",
+  "region": "AWS 리전"
+}

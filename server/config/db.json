@@ -1,0 +1,11 @@
+{
+  "development": {
+    "username": "root",
+    "password": "Hsjzz1542!",
+    "database": "db_digduck",
+    "host": "localhost",
+    "port": "3306",
+    "dialect": "mysql"
+  },
+  "salt": "ajdfkl;ajkl;qjerj1op4j12j;wejf;asfnviou02u8102814u1034ju0130rjfiojao"
+}
