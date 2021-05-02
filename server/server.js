@@ -14,9 +14,6 @@ app.use('/', router);
 
 
 
-app.get('/api/host', (req, res) => {
-    res.send({ host : 'sejun' });
-})
 app.get('/', (req, res) => {
     res.send(`Response Complate`);
 })

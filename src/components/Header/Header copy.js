@@ -3,8 +3,7 @@ import React from "react";
 
 // import { Route, Link } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
-import LoginMain from "./Login/LoginMain"
-// import ConHeadDropLogin from "./ConHeadDropLogin";
+import ConHeadDropLogin from "./ConHeadDropLogin";
 
 const Header = () => {
  
@@ -36,10 +35,7 @@ const Header = () => {
         
 
         <Nav>
-          {/* <ConHeadDropLogin></ConHeadDropLogin> */}
-          <LoginMain>
-            
-          </LoginMain>
+          <ConHeadDropLogin></ConHeadDropLogin>
         </Nav>
 
         <div className="col-md-3 bg-dark d-none d-xl-flex"></div>

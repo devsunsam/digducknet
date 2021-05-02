@@ -6,13 +6,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull:false
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        isEmail: true
+        isEmail: true,
       },
 
       userID: {
@@ -22,7 +22,12 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       userPW: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      isValide: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
       },
       createdDate: {

@@ -1,10 +1,10 @@
-import Password from "antd/lib/input/Password";
+
 import React, { useState, useRef } from "react";
 import { Modal, Button, Nav, Navbar } from "react-bootstrap";
 
-import LoginBody from "./Login/LoginBody";
-import PasswordBody from "./Login/PasswordBody";
-import SignInBody from "./Login/SignInBody";
+import LoginBody from "./LoginBody";
+import PasswordBody from "./PasswordBody";
+import SignInBody from "./SignInBody";
 
 const LoginModal = (props) => {
   const [state, setState] = useState({

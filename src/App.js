@@ -22,7 +22,7 @@ const App = () => {
           
         </div>
         <div className="col-xl-5">
-          <ArticleMain/>
+          {/* <ArticleMain/> */}
           {/* <Main /> */}
         </div>
         <div className="col-xl-2 bg-info">

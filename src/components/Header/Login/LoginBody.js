@@ -1,78 +1,99 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+import MsgDanger from "../../Common/MsgDanger";
 import axios from "axios";
 
 const LoginBody = () => {
   const [state, setState] = useState({
-    id: "",
-    pw: "",
-    login: false,
+    errMsg: "",
+    errShow: false,
   });
-  const _changeID = (e) => {
-    const id_v = e.currentTarget.value;
-    setState({ ...state, id: id_v });
-  };
-  const _changePW = (e) => {
-    const pw_v = e.currentTarget.value;
-    setState({ ...state, pw: pw_v });
-  };
 
-  const _loginView = async (e) => {
-    const id = state.id.trim();
-    const password = state.pw.trim();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-    if (id === "") {
-      return alert("아이디를 입력해주세요.");
-    } else if (password === "") {
-      return alert("비밀번호를 입력해주세요.");
-    }
+  // const _changeForm = (e) => {
+  //   switch (e.currentTarget.name) {
+  //     case "email":
+  //       setState({ ...state, email: e.currentTarget.value });
+  //       break;
+  //     case "userPW":
+  //       setState({ ...state, userPW2: e.currentTarget.value });
+  //       break;
+  //     default:
+  //       console.log("default");
+  //   }
+  // };
 
-    const res = await axios("/send/pw", {
+  const onSubmit = async (data) => {
+    // alert(JSON.stringify(data));
+    const res = await axios("user/login", {
       method: "POST",
-      data: { id: id, password: password },
+      data: { email: data.email, pw: data.pw },
       headers: new Headers(),
     });
 
-    if (res.data) {
-      console.log(res.data.msg);
-
-      if (res.data.suc) {
-        sessionStorage.setItem("login", true);
-        
-        return setState({ ...state, login: true });
-      } else {
-        return alert("id, pw 일치하지 않음");
-      }
+    if (res.data[0]) {
+      console.log("Success to log in");
+    } else {
+      setState({ ...state, errShow: true, errMsg: "Login 실패" });
     }
+    console.log(res);
   };
 
   return (
-    <Form.Group>
-      <Form.Row>
-        <Form.Label column="lg">e-mail</Form.Label>
-        <Form.Control
-          size="lg"
-          type="email"
-          placeholder="example@example.com"
-          onChange={_changeID}
-        />
-      </Form.Row>
-      <Form.Row>
-        <Form.Label column="lg">Password</Form.Label>
-        <Form.Control
-          size="lg"
-          type="password"
-          placeholder="Password"
-          onChange={_changePW}
-          name="pw"
-        />
-      </Form.Row>
-      <Form.Row className="d-flex mt-4 flex-row-reverse">
-        <Button variant="primary" type="submit" onClick={_loginView}>
-          Submit
-        </Button>
-      </Form.Row>
-    </Form.Group>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Form.Group>
+        {JSON.stringify(state)}
+
+        <MsgDanger err={state.errMsg} show={state.errShow} />
+        <Form.Row>
+          <Form.Label column="lg">e-mail</Form.Label>
+          <Form.Control
+            size="lg"
+            placeholder="example@example.com"
+            // onChange={_changeForm}
+            type="email"
+            {...register("email", {
+              required: true,
+              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            })}
+          />
+        </Form.Row>
+        <Form.Row>
+          <Form.Label column="lg">Password</Form.Label>
+          <Form.Control
+            size="lg"
+            type="password"
+            placeholder="Password"
+            // onChange={_changeForm}
+            autoComplete="false"
+            {...register("pw", {
+              required: true,
+              validate: {
+                positiveNumber: (value) => value.length >= 8,
+                lessThanHundred: (value) => value.length <= 30,
+              },
+            })}
+          />
+          {errors.pw && errors.pw.type === "positiveNumber" && (
+            <MsgDanger err="more 8 digits" />
+          )}
+          {errors.pw && errors.pw.type === "lessThanHundred" && (
+            <MsgDanger err="less than 30 digits" />
+          )}
+        </Form.Row>
+        <Form.Row className="d-flex mt-4 flex-row-reverse">
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Form.Row>
+      </Form.Group>
+    </form>
   );
 };
 
